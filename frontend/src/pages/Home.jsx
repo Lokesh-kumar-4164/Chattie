@@ -33,7 +33,7 @@ import Navbar from "../components/Navbar"
           </p>
 
           <div className="flex gap-5 mt-10">
-            <Link to="/login">
+            <Link to="/chat">
             <button className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 px-7 py-4 rounded-2xl font-semibold transition">
 
               Get Started

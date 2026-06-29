@@ -6,6 +6,7 @@ import { lazy, Suspense } from "react"
 const Login = lazy(() => import("./pages/Login"))
 const Home = lazy(() => import("./pages/Home"))
 const Register = lazy(() => import("./pages/Register.jsx"))
+const ChatPage = lazy(() => import("./chat/ChatLayout.jsx"))
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/" element={<Home/>} />
       <Route path="/login" element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>
+      <Route  path="/chat" element={<ChatPage/>}/>
       
     </Routes>
     </Suspense>
