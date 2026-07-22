@@ -1,35 +1,10 @@
 import { Search, MessageCircle, Settings } from "lucide-react";
 
-const users = [
-  {
-    id: 1,
-    name: "Naruto",
-    message: "Believe it! 🍜",
-    online: true,
-  },
-  {
-    id: 2,
-    name: "Luffy",
-    message: "Let's find One Piece 😂",
-    online: true,
-  },
-  {
-    id: 3,
-    name: "Zoro",
-    message: "I'm lost again...",
-    online: false,
-  },
-  {
-    id: 4,
-    name: "Gojo",
-    message: "You can't touch me 😎",
-    online: true,
-  },
-];
 
-export default function Sidebar() {
+
+export default function Sidebar({contact, setContact, allContacts}) {
   return (
-    <div className="w-96 bg-white border-r border-yellow-100 flex flex-col">
+    <div className="w-96 bg-white border-r border-yellow-100 flex flex-col ">
 
       {/* Header */}
 
@@ -70,10 +45,12 @@ export default function Sidebar() {
 
       <div className="flex-1 overflow-y-auto px-3">
 
-        {users.map((user) => (
+        {allContacts.map((user) => (
           <div
             key={user.id}
-            className="flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-yellow-50 transition mb-2"
+            className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-yellow-50 transition mb-2 
+            ${user.id===contact.id? 'bg-red-500':""}`}
+            onClick={() => setContact(user)}
           >
 
             <div className="relative">

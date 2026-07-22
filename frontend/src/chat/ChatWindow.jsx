@@ -1,8 +1,9 @@
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
+import { useState } from 'react'
 
-const messages = [
+const tempMessages = [
   {
     own: false,
     text: "Hey annaya 👋",
@@ -22,6 +23,8 @@ const messages = [
 ];
 
 export default function ChatWindow() {
+  const [messages, setMessages] = useState(tempMessages);
+
   return (
     <div className="flex-1 flex flex-col">
 
@@ -39,7 +42,7 @@ export default function ChatWindow() {
 
       </div>
 
-      <MessageInput />
+      <MessageInput setMessages={setMessages} />
 
     </div>
   );
