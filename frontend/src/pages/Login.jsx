@@ -16,15 +16,19 @@ export default function Login() {
   async function handleLogin(e) {
     e.preventDefault();
     setLoading(true);
-    
-     login(email,password).then((res) => {
-      if(res.success){
+    setError(null);
+    try {
+      const res = await login(email, password);
+      if (res.success) {
         navigate("/chat");
-      }else{
-        setError(res.message);
+      } else {
+        setError(res.message || "Login failed");
       }
-     })
-     setLoading(false);
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   }
 
   
@@ -135,16 +139,7 @@ export default function Login() {
 
           <div className="flex justify-between items-center mt-5">
 
-            <label className="flex items-center gap-2 text-gray-600">
-
-              <input
-                type="checkbox"
-                className="accent-yellow-400"
-              />
-
-              Remember me
-
-            </label>
+            
 
             <button className="text-yellow-500 hover:text-yellow-600">
               Forgot Password?

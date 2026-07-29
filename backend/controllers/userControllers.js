@@ -1,7 +1,22 @@
 import User from "../models/users.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { getConversations } from "../services/conversationService.js"
+import { getConversations,getMessages,sendMessageService } from "../services/conversationService.js"
+
+
+export const sendMessage = async (req,res) => {
+    try{
+       const { conversationId, content } = req.body;
+       const senderId = req.user.userId;
+       const resp = await sendMessageService(conversationId, senderId, content);
+       
+       return res.status(200).json({isSuccess: true, message: resp});
+    }catch(e){
+        console.log(`Error at send message controller ${e}`)
+        res.status(500).json({isSuccess: false, message: "Server error"})
+    }
+}
+
 
 
 export async function meController(req,res){
@@ -10,19 +25,25 @@ export async function meController(req,res){
             return res.status(401).json({ message: 'Unauthorized' });
         }
         const userId = req.user?.userId;
-        const user = await User.findById(userId);
-        return res.status(200).json(user);
+        const user = await User.findById(userId).select('-password'); // Exclude password from the response
+        return res.status(200).json({isSuccess: true, userData:user});
     }catch(e){
+        
         console.log(`Error at me controller ${e}`)
+        return res.status(500).json({isSuccess: false, message: "Server error"})
     }
 }
 
 export async function conversations(req,res){
     try{
-        const userId = req.params.id;
-        const conversations = getConversations(userId);
+        
+        const userId = req.user.userId;
+        const conversations = await getConversations(userId);
+
+        return res.status(200).json({isSuccess: true, conversations});
     }catch(e){
         console.log(`Error at get conversations ${e}`)
+        return res.status(500).json({isSuccess: false, message: "Server error"})
     }
 }
 
@@ -34,17 +55,29 @@ export async function conversations(req,res){
 //     }
 // }
 
+export async function messages(req,res){
+    try{
+        const conversationId = req.params.conversationId;
+        console.log()
+        const msgs = await getMessages(conversationId);
+        
+        return res.status(200).json({isSuccess: true, messages: msgs});
+    }catch(e){
+        console.log(`Error at messages controller ${e}`)
+        res.status(500).json({isSuccess: false, message: "Server error"})
+    }
+}
+
 export async function registerController(req,res) {
     try{
-        const { fullName, email, password } = req.body;
-        console.log("Reached here", req.body);        
+        const { fullName, email, password } = req.body;       
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User with this email already exists." });
         }
         
 
-        if(email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
+        if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
             return res.status(400).json({ message: "Invalid email format." });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -75,6 +108,7 @@ export async function loginController(req, res) {
         }
 
         const userData = {
+            _id : user._id,
             name: user.name,
             email,
             status: user.status,
@@ -84,7 +118,7 @@ export async function loginController(req, res) {
 
        const token = jwt.sign({ userId : user._id}, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-       res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+       res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: 'lax'});
         res.status(200).json({ isSuccess: true, userData })
     } catch (e) {
         console.log("Error at login controller", e);

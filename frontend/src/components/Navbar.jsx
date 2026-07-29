@@ -7,6 +7,7 @@ import Error from "./Error";
 const Navbar = () => {
     const [error,setError] = useState(null);
     const logout = useAuthStore((state) => state.logout);
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
     function handleLogout(){
         logout().then((res) => {
             if(!res.isSuccess){
@@ -50,7 +51,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex gap-4">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <button onClick={handleLogout} className="px-5 py-2 rounded-xl border-2 border-yellow-400 hover:bg-yellow-100 transition">
               Logout
             </button>

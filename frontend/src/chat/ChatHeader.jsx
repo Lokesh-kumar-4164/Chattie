@@ -1,6 +1,6 @@
 import { Phone, Video, MoreVertical } from "lucide-react";
 
-export default function ChatHeader() {
+export default function ChatHeader({ contact }) {
   return (
     <div className="bg-white h-24 px-10 flex justify-between items-center border-b">
 
@@ -14,11 +14,11 @@ export default function ChatHeader() {
         <div>
 
           <h2 className="font-bold text-xl">
-            Naruto
+            {contact.name}
           </h2>
 
           <p className="text-green-500">
-            Online
+            {contact.online ? "Online" : "Offline"}
           </p>
 
         </div>

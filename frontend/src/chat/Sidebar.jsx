@@ -74,9 +74,9 @@ export default function Sidebar({contact, setContact, allContacts}) {
 
         {allContacts.map((user) => (
           <div
-            key={user.id}
+            key={user._id}
             className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-yellow-300 transition mb-2 
-            ${user.id===contact.id? 'bg-yellow-200':""}`}
+            ${ contact && user._id===contact._id? 'bg-yellow-200':""}`}
             onClick={() => HandleClick(user)}
           >
 
