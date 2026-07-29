@@ -1,8 +1,29 @@
 import { Search, MessageCircle, Settings } from "lucide-react";
-
-
+import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Error from "../components/Error";
 
 export default function Sidebar({contact, setContact, allContacts}) {
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+  const [error,setError] = useState(null);
+  const HandleClick = (user) => {
+    setContact(user);
+    // get users from backend
+  }
+
+  function handleLogout(){
+    logout().then((res) => {
+      if(res.isSuccess){
+        navigate("/")
+      }else{
+        setError(res.message);
+      }
+    })
+  }
+
+  if(error) return <Error isOpen={error?true:false} onClose={() => setError(null)} message={error}/>
   return (
     <div className="w-96 bg-white border-r border-yellow-100 flex flex-col ">
 
@@ -14,6 +35,12 @@ export default function Sidebar({contact, setContact, allContacts}) {
           ChatBee 🐝
         </h1>
 
+        <div >
+          <h1
+          onClick={handleLogout}
+            className="text-xl font-bold text-gray-800 p-3 rounded-xl bg-yellow-500 cursor-pointer hover:bg-yellow-400">Logout
+          </h1>
+        </div>
         <Settings
           className="cursor-pointer text-yellow-500"
           size={22}
@@ -48,9 +75,9 @@ export default function Sidebar({contact, setContact, allContacts}) {
         {allContacts.map((user) => (
           <div
             key={user.id}
-            className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-yellow-50 transition mb-2 
-            ${user.id===contact.id? 'bg-red-500':""}`}
-            onClick={() => setContact(user)}
+            className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-yellow-300 transition mb-2 
+            ${user.id===contact.id? 'bg-yellow-200':""}`}
+            onClick={() => HandleClick(user)}
           >
 
             <div className="relative">

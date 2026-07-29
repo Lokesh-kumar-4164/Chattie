@@ -30,7 +30,8 @@ export default function MessageInput({ setMessages }) {
 
         <button 
         className="bg-yellow-400 hover:bg-yellow-500 rounded-xl p-3 transition"
-        onClick={handleSend}>
+        onClick={handleSend}
+        >
 
           <Send />
 

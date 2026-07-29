@@ -1,7 +1,36 @@
 import { MessageCircle, Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom"
+import { useState } from "react"
+import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "../store/authStore";
+import Error from "../components/Error";
 
 export default function Login() {
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [error,setError] = useState(null);
+  const [loading,setLoading] = useState(false);
+  const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login);
+  async function handleLogin(e) {
+    e.preventDefault();
+    setLoading(true);
+    
+     login(email,password).then((res) => {
+      if(res.success){
+        navigate("/chat");
+      }else{
+        setError(res.message);
+      }
+     })
+     setLoading(false);
+  }
+
+  
+
+  if(loading) return <Loading/>
+  if(error) return <Error isOpen={error?true:false} onClose={() => setError(null)} message={error}/>
   return (
     <div className="min-h-screen bg-[#FFFDF5] flex">
 
@@ -66,6 +95,9 @@ export default function Login() {
 
               <input
                 type="email"
+                name="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 placeholder="Enter your email"
                 className="ml-3 w-full outline-none"
               />
@@ -87,7 +119,10 @@ export default function Login() {
               <Lock size={20} className="text-gray-400" />
 
               <input
+              value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
+                name="password"
                 placeholder="Enter your password"
                 className="ml-3 w-full outline-none"
               />
@@ -119,7 +154,7 @@ export default function Login() {
 
           {/* Login */}
 
-          <button className="mt-8 w-full bg-yellow-400 hover:bg-yellow-500 transition py-4 rounded-xl font-semibold text-gray-800">
+          <button onClick={handleLogin} className="mt-8 w-full bg-yellow-400 hover:bg-yellow-500 transition py-4 rounded-xl font-semibold text-gray-800">
             Login
           </button>
 
