@@ -1,4 +1,4 @@
-import { Search, MessageCircle, Settings } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -41,10 +41,7 @@ export default function Sidebar({contact, setContact, allContacts}) {
             className="text-xl font-bold text-gray-800 p-3 rounded-xl bg-yellow-500 cursor-pointer hover:bg-yellow-400">Logout
           </h1>
         </div>
-        <Settings
-          className="cursor-pointer text-yellow-500"
-          size={22}
-        />
+        
 
       </div>
 
