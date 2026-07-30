@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import Loading from "./components/Loading"
 import { useAuthStore } from "./store/authStore"
 import { useEffect } from "react"
-
+import { connectSocket } from "./socket/socketHandler.js"
 import { lazy, Suspense } from "react"
 import ProtectedRoute from "./routes/protectedRoute.jsx"
 
@@ -17,10 +17,17 @@ const App = () => {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     checkAuth();
-  },[checkAuth])
+
+    if(user?._id){
+      connectSocket(user._id)
+
+    }
+
+  },[checkAuth,user?._id])
 
   if (isLoading) return <Loading />
 
