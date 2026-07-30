@@ -4,6 +4,7 @@ import MessageInput from "./MessageInput";
 import { useState, useEffect, useRef } from "react";
 import { getMessagesAPI } from "../api/chatApi";
 import { useAuthStore } from "../store/authStore";
+import  socket  from "../socket/socket";
 import Error from "../components/Error";
 
 export default function ChatWindow({ handleSend, setIp, contact }) {
@@ -59,6 +60,33 @@ export default function ChatWindow({ handleSend, setIp, contact }) {
       behavior: "auto",
     });
   }, [messages]);
+
+
+  useEffect(() => {
+    const handleReceiveMessage = (message) => {
+
+        if (message.conversationId.toString() !== contact._id.toString()) {
+          return;
+        }
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          _id: message._id,
+          own: false,
+          text: message.content,
+        },
+      ])
+    }
+
+    socket.on("receive-message", handleReceiveMessage);
+
+    return () => {
+      socket.off("receive-message", handleReceiveMessage)
+    }
+
+    
+  },[contact?._id])
 
 
   function addMessage(text) {

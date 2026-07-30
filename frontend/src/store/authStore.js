@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import socket from "../socket/socket";
 
 import {  loginAPI, logoutAPI, checkAuth as checkAuthAPI } from "../api/userApi";
 
@@ -38,7 +39,7 @@ export const useAuthStore = create((set) => ({
     logout: async () => {
         try {
             await logoutAPI();
-
+            socket.disconnect()
             set({
                 user: null,
                 isAuthenticated: false,

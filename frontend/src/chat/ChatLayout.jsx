@@ -8,16 +8,31 @@ import { useLocation } from "react-router-dom";
 import Error from "../components/Error";
 import { sendMessageAPI } from "../api/chatApi";
 import { pushToFront } from "../services/helperFunctions.js";
+// import socket from "../socket/socket";
 
-export default function ChatLayout() {
+export default function ChatLayout({ onlineUsers }) {
   const [allContacts, setAllContacts] = useState([]);
   const [curContact, setCurContact] = useState(null);
   const user = useAuthStore((state) => state.user);
   const location = useLocation();
   const [ip, setIp] = useState("");
   const [error, setError] = useState(null);
+  // const [onlineUsers, setOnlineUsers] = useState([])
 
   const receivedContact = location.state?.contact;
+
+  // useEffect(() => {
+  //   const handleOnlineUsers = (users) => {
+  //     setOnlineUsers(users);
+    
+  //   }
+
+  //   socket.on("online-users", handleOnlineUsers);
+
+  //   return () => {
+  //     socket.off("online-users", handleOnlineUsers)
+  //   }
+  // },[])
 
   useEffect(() => {
     async function fetchConversations() {
@@ -33,7 +48,7 @@ export default function ChatLayout() {
             _id: contact._id,
             name: otherParticipant?.name || "User",
             message: contact.latestMessage?.content || "",
-            online: otherParticipant?.isOnline || false,
+            online: onlineUsers.includes(otherParticipant?._id?.toString()),
           };
         });
         setAllContacts(formatted);
@@ -43,7 +58,7 @@ export default function ChatLayout() {
       }
     }
     fetchConversations();
-  }, [user?._id, receivedContact]);
+  }, [user?._id, receivedContact,onlineUsers]);
 
   async function handleSend() {
     if (!ip.trim()) return;
@@ -56,6 +71,8 @@ export default function ChatLayout() {
       setError("unable to send message");
     }
   }
+
+  
 
   if (error) {
     return (
