@@ -210,10 +210,7 @@ export default function Register() {
             <div className="flex-1 border-t"></div>
           </div>
 
-          {/* Google */}
-          <button className="w-full py-4 border rounded-xl hover:bg-yellow-50 transition font-medium">
-            Continue with Google
-          </button>
+          
 
           <p className="text-center mt-8 text-gray-500">
             Already have an account?

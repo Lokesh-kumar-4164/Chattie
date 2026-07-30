@@ -16,7 +16,7 @@ export const sendMessage = async (req,res) => {
        const { conversationId, content } = req.body;
        const senderId = req.user.userId;
        const {newMessage, receiverId} = await sendMessageService(conversationId, senderId, content);
-       const receiverSocketId = getSocketId(receiverId.toString());
+       const receiverSocketId = receiverId ? getSocketId(receiverId.toString()) : null;
        
        if(receiverSocketId){
         const io = getIo();
@@ -39,6 +39,9 @@ export async function meController(req,res){
         }
         const userId = req.user?.userId;
         const user = await User.findById(userId).select('-password'); // Exclude password from the response
+        if (!user) {
+            return res.status(404).json({isSuccess: false, message: "User not found"});
+        }
         return res.status(200).json({isSuccess: true, userData:user});
     }catch(e){
         
@@ -65,7 +68,7 @@ export async function createConversation(req,res){
         const userId = req.user.userId;
         const { participantId } = req.body;
         if(userId===participantId){
-            res.status(400).json({isSuccess: false, message: "Cannot create conversation with yourself"});
+            return res.status(400).json({isSuccess: false, message: "Cannot create conversation with yourself"});
         }
         const conversation = await createConversationService(userId, participantId);
         return res.status(200).json({isSuccess: true, conversation});
@@ -138,6 +141,7 @@ export async function registerController(req,res) {
 
     }catch(e){
         console.log(`Error at register controller ${e}`)
+        return res.status(500).json({ message: "Server error" });
     }
 }
 
@@ -165,9 +169,18 @@ export async function loginController(req, res) {
             lastSeen: user.lastSeen
         }
 
-       const token = jwt.sign({ userId : user._id}, process.env.JWT_SECRET, { expiresIn: '1h' });
+       const token = jwt.sign(
+        { userId : user._id}, 
+        process.env.JWT_SECRET, 
+        { expiresIn: '1h' }
+        );
 
-       res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: 'lax'});
+       res.cookie('token', token, 
+        { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'development'? false : true, 
+        maxAge: 3600000, sameSite: process.env.NODE_ENV=== 'development'? 'lax' : 'None' 
+        });
         res.status(200).json({ isSuccess: true, userData })
     } catch (e) {
         console.log("Error at login controller", e);
