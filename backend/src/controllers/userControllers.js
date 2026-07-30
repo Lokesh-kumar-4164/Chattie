@@ -21,7 +21,7 @@ export const sendMessage = async (req,res) => {
        if(receiverSocketId){
         const io = getIo();
         io.to(receiverSocketId).emit("receive-message", newMessage);
-        console.log("Sending to: in sendMessage", receiverSocketId);
+       
        }
        return res.status(200).json({isSuccess: true, message: newMessage});
     }catch(e){
