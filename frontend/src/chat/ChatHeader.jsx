@@ -6,10 +6,7 @@ export default function ChatHeader({ contact }) {
 
       <div className="flex items-center gap-4">
 
-        <img
-          src="https://i.pravatar.cc/100?img=20"
-          className="w-14 h-14 rounded-full"
-        />
+        
 
         <div>
 

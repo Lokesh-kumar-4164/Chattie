@@ -3,16 +3,18 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import connect from './connections/connectDB.js'
 import userRouter from "./routes/userRoutes.js"
+import http from 'http'
 import cookieParser from 'cookie-parser'
 dotenv.config();
 
 import User from './models/users.js'
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT
 
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:process.env.CLIENT_URL,
     credentials: true,
 }))
 app.use(express.json());

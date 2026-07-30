@@ -10,6 +10,7 @@ const Login = lazy(() => import("./pages/Login"))
 const Home = lazy(() => import("./pages/Home"))
 const Register = lazy(() => import("./pages/Register.jsx"))
 const ChatPage = lazy(() => import("./chat/ChatLayout.jsx"))
+const AddChat = lazy(() => import("./pages/AddChat.jsx"))
 
 
 const App = () => {
@@ -34,6 +35,11 @@ const App = () => {
           <ChatPage/>
         </ProtectedRoute>
           
+      }/>
+      <Route path="/add-chat" element={
+        <ProtectedRoute>
+          <AddChat/>
+        </ProtectedRoute>
       }/>
       
     </Routes>

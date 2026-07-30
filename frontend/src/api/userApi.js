@@ -1,9 +1,4 @@
-import axios from "axios"
-
-export const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,
-    withCredentials: true,
-})
+import api from "./setup.js"
 
 // console.log("This is " + import.meta.env.VITE_BACKEND_URL)
 
@@ -61,25 +56,17 @@ export const getConversationsAPI = async () => {
     }
 }
 
-export const getMessagesAPI = async (conversationId) => {
+export const createConversationAPI = async (participantId) => {
     try{
-        const response = await api.get(`/user/messages/${conversationId}`, {withCredentials: true});
+        const response = await api.post("/user/create-conversation", {participantId}, {withCredentials: true});
         return response.data
     }    
     catch(e){
-        console.log(`Error at getMessages : ${e.response}`);
+        console.log(`Error at createConversation : ${e.response}`);
         throw e;
     }
 }
 
 
-export const sendMessageAPI = async (conversationId, content) => {
-    try{
-        const response = await api.post(`/user/send-message`, {conversationId, content}, {withCredentials: true});        
-        return response.data    
-    }    
-    catch(e){
-        console.log(`Error at sendMessage : ${e.response}`);
-        throw e;
-    }
-}
+
+

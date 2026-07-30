@@ -8,7 +8,9 @@ import {
     conversations,
     meController,
     messages,
-    sendMessage
+    sendMessage,
+    chats,
+    createConversation,
 } from "../controllers/userControllers.js"
 import verifyToken from "../services/verifyToken.js";
 const router = express.Router();
@@ -20,8 +22,10 @@ router.post("/me",verifyToken,meController)
 
 router.post("/logout",verifyToken, logoutController)
 router.post("/send-message",verifyToken, sendMessage)
+router.get("/chats/:email",verifyToken, chats )
 router.get("/messages/:conversationId",verifyToken, messages)
 router.get("/conversations",verifyToken, conversations)
+router.post("/create-conversation",verifyToken, createConversation);
 
 
 export default router;

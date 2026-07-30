@@ -82,10 +82,7 @@ export default function Sidebar({contact, setContact, allContacts}) {
 
             <div className="relative">
 
-              <img
-                src={`https://i.pravatar.cc/100?img=${user.id + 15}`}
-                className="w-14 h-14 rounded-full"
-              />
+              
 
               {user.online && (
                 <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
@@ -112,7 +109,7 @@ export default function Sidebar({contact, setContact, allContacts}) {
 
       {/* Bottom */}
 
-      <div className="p-5 border-t">
+      <div onClick={() => navigate("/add-chat")} className="p-5 border-t" >
 
         <button className="w-full bg-yellow-400 hover:bg-yellow-500 py-3 rounded-xl font-semibold flex justify-center gap-2">
 

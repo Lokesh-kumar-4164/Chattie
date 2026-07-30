@@ -1,7 +1,12 @@
 import User from "../models/users.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { getConversations,getMessages,sendMessageService } from "../services/conversationService.js"
+import { 
+    createConversationService,
+    getConversations,
+    getMessages,
+    sendMessageService
+} from "../services/conversationService.js"
 
 
 export const sendMessage = async (req,res) => {
@@ -47,6 +52,21 @@ export async function conversations(req,res){
     }
 }
 
+export async function createConversation(req,res){
+    try{
+        const userId = req.user.userId;
+        const { participantId } = req.body;
+        if(userId===participantId){
+            res.status(400).json({isSuccess: false, message: "Cannot create conversation with yourself"});
+        }
+        const conversation = await createConversationService(userId, participantId);
+        return res.status(200).json({isSuccess: true, conversation});
+    }catch(e){ 
+        console.log(`Error at create conversation ${e}`)
+        return res.status(500).json({isSuccess: false, message: "Server error"})
+    }
+}
+
 // export function logoutController(req,res){
 //     try{
 //         res.clearCookie('token');    
@@ -54,6 +74,22 @@ export async function conversations(req,res){
 //         console.log(`Error at logout controller ${e}`)
 //     }
 // }
+
+export async function chats(req,res){
+    try{
+        const email = req.params.email;
+        const user = await User.findOne({email}).select('-password');
+        
+        if(!user){
+            return res.status(404).json({isSuccess: false, message: "User not found"});
+        }
+        return res.status(200).json({isSuccess: true, user});
+    }catch(e){
+        console.log(`Error at chats controller ${e}`)
+        return res.status(500).json({isSuccess: false, message: "Server error"})
+    }
+}
+        
 
 export async function messages(req,res){
     try{

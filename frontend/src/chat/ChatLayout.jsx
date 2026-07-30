@@ -1,41 +1,24 @@
 import Sidebar from "./Sidebar";
 import ChatWindow from "./ChatWindow";
-import { useState } from 'react'
-import { useEffect } from "react"
-import { getConversationsAPI } from "../api/userApi"
-import { useAuthStore } from "../store/authStore"
-
-const users = [
-  {
-    id: 1,
-    name: "Naruto",
-    message: "Believe it! 🍜",
-    online: true,
-  },
-  {
-    id: 2,
-    name: "Luffy",
-    message: "Let's find One Piece 😂",
-    online: true,
-  },
-  {
-    id: 3,
-    name: "Zoro",
-    message: "I'm lost again...",
-    online: false,
-  },
-  {
-    id: 4,
-    name: "Gojo",
-    message: "You can't touch me 😎",
-    online: true,
-  },
-];
+import { useState } from "react";
+import { useEffect } from "react";
+import { getConversationsAPI } from "../api/userApi";
+import { useAuthStore } from "../store/authStore";
+import { useLocation } from "react-router-dom";
+import Error from "../components/Error";
+import { sendMessageAPI } from "../api/chatApi";
+import { pushToFront } from "../services/helperFunctions.js";
 
 export default function ChatLayout() {
   const [allContacts, setAllContacts] = useState([]);
-  const [curContact, setCurContact] = useState(allContacts[0]);
+  const [curContact, setCurContact] = useState(null);
   const user = useAuthStore((state) => state.user);
+  const location = useLocation();
+  const [ip, setIp] = useState("");
+  const [error, setError] = useState(null);
+
+  const receivedContact = location.state?.contact;
+
   useEffect(() => {
     async function fetchConversations() {
       try {
@@ -43,7 +26,8 @@ export default function ChatLayout() {
         if (!contacts || !contacts.conversations) return;
         const formatted = contacts.conversations.map((contact) => {
           const otherParticipant = contact.participants?.find(
-            (participant) => participant?._id?.toString() !== user?._id?.toString()
+            (participant) =>
+              participant?._id?.toString() !== user?._id?.toString(),
           );
           return {
             _id: contact._id,
@@ -53,22 +37,50 @@ export default function ChatLayout() {
           };
         });
         setAllContacts(formatted);
+        setCurContact(receivedContact || formatted[0]);
       } catch (err) {
         console.error("Failed to fetch conversations:", err);
       }
     }
     fetchConversations();
-  }, [user?._id]);
- 
+  }, [user?._id, receivedContact]);
 
-  
+  async function handleSend() {
+    if (!ip.trim()) return;
+    const res = await sendMessageAPI(curContact._id, ip);
+    if (res.isSuccess) {
+      const newContacts = pushToFront(allContacts, curContact._id, ip);
+      setAllContacts(newContacts);
+      setIp("");
+    } else {
+      setError("unable to send message");
+    }
+  }
+
+  if (error) {
+    return (
+      <Error
+        message={error}
+        onClose={() => setError(null)}
+        isOpen={error ? true : false}
+      />
+    );
+  }
+
   return (
     <div className="h-screen bg-[#FFFDF5] flex overflow-hidden">
+      <Sidebar
+        contact={curContact}
+        setContact={setCurContact}
+        allContacts={allContacts}
+      />
 
-      <Sidebar contact={curContact} setContact={setCurContact} allContacts={allContacts}/>
-
-      <ChatWindow contact={curContact}/>
-
+      <ChatWindow 
+        handleSend={handleSend} 
+        setIp={setIp} 
+        contact={curContact} 
+       
+      />
     </div>
   );
 }

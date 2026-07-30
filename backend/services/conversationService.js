@@ -9,7 +9,8 @@ export const getConversations = async (userId) => {
       participants: new mongoose.Types.ObjectId(userId),
     })
       .populate("participants")
-      .populate("latestMessage");
+      .populate("latestMessage")
+      .sort({ updatedAt : -1});
 
     return conversations;
   } catch (e) {
@@ -38,6 +39,8 @@ export const sendMessageService = async (conversationId, senderId, content) => {
       throw new Error("Message content cannot be empty");
     }
 
+
+
     const newMessage = await Message.create({
       sender: senderId,
       conversationId,
@@ -54,6 +57,31 @@ export const sendMessageService = async (conversationId, senderId, content) => {
 
   } catch (e) {
     console.log(`Error at send message: ${e.message}`);
+    throw e;
+  }
+};
+
+export const createConversationService = async (userId, participantId) => {
+  try {
+
+    if(userId===participantId) return null;
+    const existingConversation = await Conversation.findOne({
+      participants: { $all: [userId, participantId] },
+    })
+    .populate("participants");
+    
+
+    if (existingConversation) {
+      return existingConversation;
+    }
+
+    const conversation = await Conversation.create({
+      participants: [userId, participantId]
+    })
+    .populate("participants");
+    return conversation;
+  } catch (e) {
+    console.log(`Error at create conversation: ${e.message}`);
     throw e;
   }
 };
