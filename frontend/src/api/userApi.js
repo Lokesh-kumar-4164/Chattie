@@ -1,8 +1,4 @@
-import axios from "axios"
-
-export const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,
-})
+import api from "./setup.js"
 
 // console.log("This is " + import.meta.env.VITE_BACKEND_URL)
 
@@ -41,10 +37,36 @@ export const logoutAPI = async () => {
 
 export const checkAuth = async () => {
     try{
-        const response = await api.get("/user/me", {withCredentials: true});
+        const response = await api.post("/user/me", {}, {withCredentials: true});
         return response.data
     }catch(e){
         console.log(`Error at checkAuth : ${e.response}`);
         throw e;
     }
 }
+
+export const getConversationsAPI = async () => {
+    try{
+        const response = await api.get("/user/conversations", {withCredentials: true});
+        return response.data
+    }    
+    catch(e){
+        console.log(`Error at getConversations : ${e.response}`);
+        throw e;
+    }
+}
+
+export const createConversationAPI = async (participantId) => {
+    try{
+        const response = await api.post("/user/create-conversation", {participantId}, {withCredentials: true});
+        return response.data
+    }    
+    catch(e){
+        console.log(`Error at createConversation : ${e.response}`);
+        throw e;
+    }
+}
+
+
+
+

@@ -1,22 +1,19 @@
 import { create } from "zustand";
 
-import {  loginAPI, logoutAPI, checkAuth } from "../api/userApi";
+import {  loginAPI, logoutAPI, checkAuth as checkAuthAPI } from "../api/userApi";
 
 export const useAuthStore = create((set) => ({
     user: null,
     isAuthenticated: false,
-    isLoading: false,
+    isLoading: true,
+
 
     // Login user
     login: async (email, password) => {
         try {
-            set({ isLoading: true });
-
             const response = await loginAPI({ email, password });
-            console.log("this is in store", response.userData)
-
             set({
-                user: response.userData,
+                user: response.userData || response.user,
                 isAuthenticated: true,
                 isLoading: false,
             });
@@ -58,10 +55,10 @@ export const useAuthStore = create((set) => ({
         try {
             set({ isLoading: true });
 
-            const response = await checkAuth();
+            const response = await checkAuthAPI();
 
             set({
-                user: response.data.user,
+                user: response.userData || response.user,
                 isAuthenticated: true,
                 isLoading: false,
             });

@@ -1,13 +1,21 @@
 import { Send, Smile, Paperclip } from "lucide-react";
-import { useState } from 'react'
+import { useState } from "react"; 
 
-export default function MessageInput({ setMessages }) {
-  const [ip,setIp] = useState("")
-
-  const handleSend = () => {
-    setMessages((prev) => [...prev, {own:true, text:ip}])
-    setIp("");
+export default function MessageInput({ addMessage, handleSend, setIp }) {
+  const [input,setInput] = useState("")
+  function manageSend() {
+    addMessage(input)
+    handleSend();
+    setIp('');
+    setInput("");
   }
+
+  function handleChange(event){
+    setIp(event.target.value);
+    setInput(event.target.value);
+  }
+
+  
   return (
     <div className="bg-white p-6 border-t">
 
@@ -24,16 +32,17 @@ export default function MessageInput({ setMessages }) {
         <input
           placeholder="Type something funny... 😂"
           className="flex-1 bg-transparent outline-none"
-          onChange={() => setIp(event.target.value)}
-          value={ip}
+          onChange={handleChange}
+          value={input}
+          
         />
 
         <button 
         className="bg-yellow-400 hover:bg-yellow-500 rounded-xl p-3 transition"
-        onClick={handleSend}
+        onClick={manageSend}
         >
 
-          <Send />
+          <Send  />
 
         </button>
 
