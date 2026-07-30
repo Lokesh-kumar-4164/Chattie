@@ -1,4 +1,4 @@
-import { listener } from "./socketHandler.js"
+import { listener, onlineUsers } from "./socketHandler.js"
 export function initializeSocket(io) {
 
   io.on("connection", (socket) => {
@@ -7,11 +7,8 @@ export function initializeSocket(io) {
     listener(socket);
 
     socket.on("disconnect", () => {
-      for(const [userId, socketId] of onlineUsers){
-        if(socketId===socket.id){
-            onlineUsers.delete(userId);
-            break;
-        }
+      if(socket.userId){
+        onlineUsers.delete(socket.userId);
       }
 
       console.log("Socket disconnected:", socket.id);
