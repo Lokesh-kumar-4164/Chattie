@@ -1,7 +1,23 @@
 
 import { MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom"
+import { useState } from "react"
+import { useAuthStore } from "../store/authStore";  
+import Error from "./Error";
 const Navbar = () => {
+    const [error,setError] = useState(null);
+    const logout = useAuthStore((state) => state.logout);
+    function handleLogout(){
+        logout().then((res) => {
+            if(!res.isSuccess){
+                setError(res.message);
+            }
+        })
+    }
+
+    if(error){
+      return <Error message={error}/>
+    }
     return (
         <nav className="flex items-center justify-between px-8 lg:px-20 py-6 bg-white shadow-sm">
 
@@ -34,11 +50,17 @@ const Navbar = () => {
         </div>
 
         <div className="flex gap-4">
-        <Link to="/login">
-          <button className="px-5 py-2 rounded-xl border-2 border-yellow-400 hover:bg-yellow-100 transition">
-            Login
-          </button>
-          </Link>
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="px-5 py-2 rounded-xl border-2 border-yellow-400 hover:bg-yellow-100 transition">
+              Logout
+            </button>
+          ) : (
+            <Link to="/login">
+              <button className="px-5 py-2 rounded-xl border-2 border-yellow-400 hover:bg-yellow-100 transition">
+                Login
+              </button>
+            </Link>
+          )}
 
         <Link to="/register">
           <button className="px-5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 transition font-semibold">
