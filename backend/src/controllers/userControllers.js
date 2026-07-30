@@ -1,5 +1,7 @@
 import User from "../models/users.js"
 import bcrypt from "bcryptjs"
+import { getSocketId } from "../socket/socketHandler.js"
+import { getIo } from "../socket/socketSetup.js"
 import jwt from "jsonwebtoken"
 import { 
     createConversationService,
@@ -13,9 +15,15 @@ export const sendMessage = async (req,res) => {
     try{
        const { conversationId, content } = req.body;
        const senderId = req.user.userId;
-       const resp = await sendMessageService(conversationId, senderId, content);
+       const {newMessage, receiverId} = await sendMessageService(conversationId, senderId, content);
+       const receiverSocketId = getSocketId(receiverId.toString());
        
-       return res.status(200).json({isSuccess: true, message: resp});
+       if(receiverSocketId){
+        const io = getIo();
+        io.to(receiverSocketId).emit("receive-message", newMessage);
+        console.log("Sending to: in sendMessage", receiverSocketId);
+       }
+       return res.status(200).json({isSuccess: true, message: newMessage});
     }catch(e){
         console.log(`Error at send message controller ${e}`)
         res.status(500).json({isSuccess: false, message: "Server error"})
@@ -141,6 +149,11 @@ export async function loginController(req, res) {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ isSuccess: false, message: "User not found" })
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ isSuccess: false, message: "Invalid credentials" });
         }
 
         const userData = {

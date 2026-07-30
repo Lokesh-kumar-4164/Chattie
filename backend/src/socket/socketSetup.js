@@ -1,5 +1,7 @@
 import { listener, onlineUsers } from "./socketHandler.js"
+let ioInstance;
 export function initializeSocket(io) {
+    ioInstance = io;
 
   io.on("connection", (socket) => {
 
@@ -16,4 +18,11 @@ export function initializeSocket(io) {
 
   });
 
+}
+
+export function getIo() {
+    if (!ioInstance) {
+        throw new Error("Socket.IO has not been initialized.");
+    }
+    return ioInstance
 }
