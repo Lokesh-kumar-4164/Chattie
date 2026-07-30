@@ -4,7 +4,7 @@ import { useAuthStore } from "./store/authStore"
 import { useEffect,useState } from "react"
 import { connectSocket } from "./socket/socketHandler.js"
 import { lazy, Suspense } from "react"
-import ProtectedRoute from "./routes/protectedRoute.jsx"
+import ProtectedRoute from "./routes/ProtectedRoute.jsx"
 import socket from "./socket/socket"
 
 const Login = lazy(() => import("./pages/Login"))
