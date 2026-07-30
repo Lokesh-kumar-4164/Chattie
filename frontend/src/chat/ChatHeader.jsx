@@ -5,9 +5,6 @@ export default function ChatHeader({ contact }) {
     <div className="bg-white h-24 px-10 flex justify-between items-center border-b">
 
       <div className="flex items-center gap-4">
-
-        
-
         <div>
 
           <h2 className="font-bold text-xl">

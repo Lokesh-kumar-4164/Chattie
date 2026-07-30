@@ -139,11 +139,6 @@ export default function Login() {
 
           <div className="flex justify-between items-center mt-5">
 
-            
-
-            <button className="text-yellow-500 hover:text-yellow-600">
-              Forgot Password?
-            </button>
 
           </div>
 
@@ -165,11 +160,7 @@ export default function Login() {
 
           </div>
 
-          {/* Google */}
-
-          <button className="w-full border rounded-xl py-4 hover:bg-yellow-50 transition font-medium">
-            Continue with Google
-          </button>
+          
 
           <p className="text-center text-gray-500 mt-8">
             Don't have an account?
