@@ -72,7 +72,8 @@ export const createConversationService = async (userId, participantId) => {
 
     const conversation = await Conversation.create({
       participants: [userId, participantId],
-    }).populate("participants");
+    });
+    await conversation.populate("participants");
     return conversation;
   } catch (e) {
     console.log(`Error at create conversation: ${e.message}`);

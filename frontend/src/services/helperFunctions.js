@@ -3,16 +3,15 @@
 export const pushToFront = (contacts, id, lastMessage) => {
     let idx = 0, n = contacts.length
 
+    const newContacts = [...contacts];
     for(let i=0;i<n;i++){
-        if(contacts[i]._id === id){
+        if(newContacts[i]._id === id){
             idx = i;
-            contacts[i].message = lastMessage
+            newContacts[i] = { ...newContacts[i], message: lastMessage };
             break;
         }
     }
-    
-    const newContacts = [...contacts];
-    newContacts.splice(idx, 1);
-    newContacts.unshift(contacts[idx]);
+    const [movedContact] = newContacts.splice(idx, 1);
+    newContacts.unshift(movedContact);
     return newContacts
 }

@@ -36,7 +36,7 @@ const App = () => {
   useEffect(() => {
       const handleOnlineUsers = (users) => {
         setOnlineUsers(users);
-        console.log("ONLINE USERS EVENT", users);
+        
       
       }
   

@@ -20,5 +20,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.2",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
   }
 }
